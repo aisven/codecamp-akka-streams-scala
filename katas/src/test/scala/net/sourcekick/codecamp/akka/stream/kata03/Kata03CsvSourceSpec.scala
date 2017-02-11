@@ -58,7 +58,7 @@ class Kata03CsvSourceSpec extends AsyncWordSpec with Matchers with ParallelTestE
 
     "create the correct stages" in {
 
-      implicit val system = ActorSystem("Kata02")
+      implicit val system = ActorSystem("Kata03")
       implicit val materializer = ActorMaterializer()
 
       val lineSource = Kata03CsvSource.createSourceOfLinesInFileKata03Csv() // Source[String, Future[IOResult]]
@@ -82,25 +82,25 @@ class Kata03CsvSourceSpec extends AsyncWordSpec with Matchers with ParallelTestE
           integers.size shouldBe 5
           integers shouldBe Seq(
             TemperatureReading("548e841a-6d98-4591-b4f9-3cc6ec04776d",
-                               Instant.parse("2017-01-05T10:00:00Z"),
-                               20.0F,
-                               TemperatureUnit.Celsius),
+              Instant.parse("2017-01-05T09:00:00Z"),
+              20.0F,
+              TemperatureUnit.Celsius),
             TemperatureReading("d7256984-06bf-4bec-983c-428239dd0cce",
-                               Instant.parse("2017-01-05T10:15:00Z"),
-                               20.3F,
-                               TemperatureUnit.Celsius),
+              Instant.parse("2017-01-05T09:30:00Z"),
+              20.3F,
+              TemperatureUnit.Celsius),
             TemperatureReading("1d651905-0d0d-4c0c-ad93-49f893b209ca",
-                               Instant.parse("2017-01-05T10:30:00Z"),
-                               20.5F,
-                               TemperatureUnit.Celsius),
+              Instant.parse("2017-01-05T10:00:00Z"),
+              20.5F,
+              TemperatureUnit.Celsius),
             TemperatureReading("af544d18-b3fe-4ea6-a6bb-fcc3677b090c",
-                               Instant.parse("2017-01-05T10:45:00Z"),
-                               21.1F,
-                               TemperatureUnit.Celsius),
+              Instant.parse("2017-01-05T10:30:00Z"),
+              21.1F,
+              TemperatureUnit.Celsius),
             TemperatureReading("02afe543-721e-4d73-b62c-0d64fda4c9d5",
-                               Instant.parse("2017-01-05T11:00:00Z"),
-                               20.7F,
-                               TemperatureUnit.Celsius)
+              Instant.parse("2017-01-05T11:00:00Z"),
+              20.7F,
+              TemperatureUnit.Celsius)
           )
 
         })
