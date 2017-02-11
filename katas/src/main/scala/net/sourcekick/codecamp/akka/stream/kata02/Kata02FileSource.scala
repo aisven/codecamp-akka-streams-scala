@@ -8,13 +8,13 @@ import scala.concurrent.Future
 object Kata02FileSource {
 
   /**
-    * Task: Create a akka.stream.javadsl.Source that emits line by line of kata02.txt file.
+    * Task: Create a akka.stream.scaladsl.Source that emits line by line of kata02.txt file.
     * <p/>
     * Tip: The direct relative path to the file is usually src/main/resources/kata02.txt when using an IDE.
     * <p/>
-    * Tip: http://doc.akka.io/docs/akka/current/java/stream/stream-cookbook.html#Logging_elements_of_a_stream
+    * Tip: http://doc.akka.io/docs/akka/current/scala/stream/stream-cookbook.html#Logging_elements_of_a_stream
     * <p/>
-    * Reference: http://doc.akka.io/docs/akka/current/java/stream/stream-io.html#Streaming_File_IO
+    * Reference: http://doc.akka.io/docs/akka/current/scala/stream/stream-io.html#Streaming_File_IO
     * <p/>
     * Check: The kata is solved when the corresponding unit test is green.
     *
