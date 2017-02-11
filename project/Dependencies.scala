@@ -7,7 +7,7 @@ object Version {
   // test
   final val ScalaTest                = "3.0.1"
 // AKka
-  final val Akka                     = "2.4.16"
+  final val Akka                     = "2.4.17"
 // time
   final val ScalaTime                = "0.4.1"
 // logging
@@ -20,6 +20,7 @@ object Library {
 // AKka
   val akkaTestkit                = "com.typesafe.akka"        %% "akka-testkit"                 % Version.Akka
   val akkaSlf4j                  = "com.typesafe.akka"        %% "akka-slf4j"                   % Version.Akka
+  val akkaStreams                = "com.typesafe.akka"        %% "akka-stream"                  % Version.Akka
 // time
   val scalaTime                  = "codes.reactive"           %% "scala-time"                   % Version.ScalaTime
 // logging

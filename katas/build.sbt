@@ -3,6 +3,7 @@ libraryDependencies ++= Vector(
 // Akka
   Library.akkaTestkit % Test,
   Library.akkaSlf4j,
+  Library.akkaStreams,
   Library.scalaTime,
 // logging
   Library.logbackClassic
