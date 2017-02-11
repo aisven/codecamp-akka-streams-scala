@@ -7,7 +7,6 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Keep, Sink}
 import net.sourcekick.codecamp.akka.stream.model.{TemperatureReading, TemperatureUnit}
 import org.scalatest.{AsyncWordSpec, Matchers, ParallelTestExecution}
-import x.Kata03CsvSource
 
 import scala.collection.immutable.Seq
 
