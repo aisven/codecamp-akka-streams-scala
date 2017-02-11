@@ -10,45 +10,45 @@ import scala.collection.immutable.Seq
 class Kata01NumberSourceSpec extends AsyncWordSpec with Matchers with ParallelTestExecution {
 
   /*
-. Please do not read this test code while solving any of the katas! Spoiler warning!
-.
-. Just run it with right-click on the test class name above.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
+   * Please do not read this test code while solving any of the katas! Spoiler warning!
+   *
+   * Just run it with right-click on the test class name above.
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
    */
 
   "Kata01NumberSource" must {
@@ -62,9 +62,9 @@ class Kata01NumberSourceSpec extends AsyncWordSpec with Matchers with ParallelTe
 
       val runnableGraph = numberSource.toMat(Sink.seq)(Keep.right) // RunnableGraph[Future[Seq[Int]]]
 
-      val future = runnableGraph.run() // Future[Seq[Int]]
+      val seqFuture = runnableGraph.run() // Future[Seq[Int]]
 
-      future.map(integers => {
+      seqFuture.map(integers => {
         integers.size shouldBe 10
         integers shouldBe Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
       })
