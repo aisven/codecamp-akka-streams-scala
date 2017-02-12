@@ -31,7 +31,7 @@ object Kata10BroadcastAndZip {
     * and their sub-classes in order to create an akka.stream.Graph.
     * For more information see the reference documentation linked below.
     * <p/>
-    * Reference: http://doc.akka.io/docs/akka/current/java/stream/stream-graphs.html
+    * Reference: http://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html
     * <p/>
     * Check: The kata is solved when the corresponding unit test is green.
     *
