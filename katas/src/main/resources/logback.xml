@@ -13,6 +13,14 @@
         </encoder>
     </appender>
 
+    <logger name="akka.stream.Materializer" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="akka.stream.Log" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <logger name="akka" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT_AKKA"/>
     </logger>
