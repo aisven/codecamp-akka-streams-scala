@@ -98,16 +98,16 @@ class Kata07KafkaSourceSpec extends AsyncWordSpec with Matchers with ParallelTes
           p._2.result
         })
 
-      // consume the first record of the 10 that have just been produced and committing the consumer offset
+      // consume the first 3 records of the 10 that have just been produced and committing the consumer offset
       {
-        val rg = source.viaMat(flow.take(1))(Keep.left).toMat(Sink.seq)(Keep.both)
-        consume(rg, 0, 0, doAssert = true)
+        val rg = source.viaMat(flow.take(3))(Keep.left).toMat(Sink.seq)(Keep.both)
+        consume(rg, 0, 2, doAssert = true)
       }
 
       // consume the other records of the 10 that have just been produced and committing the consumer offset
       {
         val rg = source.viaMat(flow)(Keep.left).toMat(Sink.seq)(Keep.both)
-        consume(rg, 1, 9, doAssert = true)
+        consume(rg, 3, 9, doAssert = true)
       }
 
       // end waiting some more for asynchronous things to complete
