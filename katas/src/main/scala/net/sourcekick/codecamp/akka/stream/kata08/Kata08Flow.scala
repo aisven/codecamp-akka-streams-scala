@@ -3,7 +3,7 @@ package net.sourcekick.codecamp.akka.stream.kata08
 import akka.NotUsed
 import akka.stream.scaladsl.Flow
 
-object Kata08Flow {
+private[kata08] object Kata08Flow {
 
   /**
     * Task: Create a simple akka.stream.scaladsl.Flow that transforms each string into an integer

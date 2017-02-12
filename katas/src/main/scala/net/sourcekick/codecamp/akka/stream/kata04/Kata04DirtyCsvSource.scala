@@ -7,7 +7,7 @@ import net.sourcekick.codecamp.akka.stream.model.TemperatureReading
 
 import scala.concurrent.Future
 
-object Kata04DirtyCsvSource {
+private[kata04] object Kata04DirtyCsvSource {
 
   /**
     * Task: Create a akka.stream.scaladsl.Source that emits line by line of kata04.csv file.
@@ -16,7 +16,7 @@ object Kata04DirtyCsvSource {
     *
     * @return The source.
     */
-  def createSourceOfLinesInFileKata04Csv(): Source[String, Future[IOResult]] = {
+  private[kata04] def createSourceOfLinesInFileKata04Csv(): Source[String, Future[IOResult]] = {
     ???
   }
 
@@ -31,7 +31,7 @@ object Kata04DirtyCsvSource {
     *
     * @return The source.
     */
-  def createRobustFlowOfStringToTemperatureReading(): Flow[String, TemperatureReading, NotUsed] = {
+  private[kata04] def createRobustFlowOfStringToTemperatureReading(): Flow[String, TemperatureReading, NotUsed] = {
     ???
   }
 

@@ -3,7 +3,7 @@ package net.sourcekick.codecamp.akka.stream.kata09
 import akka.NotUsed
 import akka.stream.{FanInShape2, Graph}
 
-object Kata09FanInShape {
+private[kata09] object Kata09FanInShape {
 
   /**
     * Task: Create a fan in shape as a raw unconnected graph

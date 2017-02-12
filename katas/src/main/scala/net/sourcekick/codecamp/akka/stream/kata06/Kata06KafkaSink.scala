@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 
 import scala.concurrent.Future
 
-object Kata06KafkaSink {
+private[kata06] object Kata06KafkaSink {
 
   implicit val system = ActorSystem("Kata06")
   implicit val materializer = ActorMaterializer()
@@ -38,7 +38,7 @@ object Kata06KafkaSink {
     *
     * @return The sink.
     */
-  def createKafkaSink(): Sink[ProducerRecord[String, String], Future[Done]] = {
+  private[kata06] def createKafkaSink(): Sink[ProducerRecord[String, String], Future[Done]] = {
     ???
   }
 }

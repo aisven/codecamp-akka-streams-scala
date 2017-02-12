@@ -3,7 +3,7 @@ package net.sourcekick.codecamp.akka.stream.kata01
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 
-object Kata01NumberSource {
+private[kata01] object Kata01NumberSource {
 
   /**
     * Task: Create a akka.stream.scaladsl.Source that emits the first ten natural numbers before completing.
@@ -16,7 +16,7 @@ object Kata01NumberSource {
     *
     * @return The source.
     */
-  def createSourceOfNaturalNumbers1to10(): Source[Int, NotUsed] = {
+  private[kata01] def createSourceOfNaturalNumbers1to10(): Source[Int, NotUsed] = {
     Source(1 to 10).log("numberSource")
   }
 

@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import net.sourcekick.codecamp.akka.stream.model.FunResult
 
-object Kata07KafkaSource {
+private[kata07] object Kata07KafkaSource {
 
   implicit val system = ActorSystem("Kata07")
   implicit val materializer = ActorMaterializer()

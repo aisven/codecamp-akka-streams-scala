@@ -5,7 +5,7 @@ import akka.stream.scaladsl.Source
 
 import scala.concurrent.Future
 
-object Kata02FileSource {
+private[kata02] object Kata02FileSource {
 
   /**
     * Task: Create a akka.stream.scaladsl.Source that emits line by line of kata02.txt file.
@@ -20,7 +20,7 @@ object Kata02FileSource {
     *
     * @return The source.
     */
-  def createSourceOfLinesInFileKata02Txt(): Source[String, Future[IOResult]] = {
+  private[kata02] def createSourceOfLinesInFileKata02Txt(): Source[String, Future[IOResult]] = {
     ???
   }
 

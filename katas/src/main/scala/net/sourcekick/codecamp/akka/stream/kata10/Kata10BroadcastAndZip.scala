@@ -7,7 +7,7 @@ import akka.stream.{ClosedShape, Graph}
 import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
-object Kata10BroadcastAndZip {
+private[kata10] object Kata10BroadcastAndZip {
 
   /**
     * Task: Create an akka.stream.Graph that has no unconnected inlets or outlets

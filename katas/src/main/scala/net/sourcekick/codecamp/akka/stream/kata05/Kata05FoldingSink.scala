@@ -4,7 +4,7 @@ import akka.stream.scaladsl.Sink
 
 import scala.concurrent.Future
 
-object Kata05FoldingSink {
+private[kata05] object Kata05FoldingSink {
 
   /**
     * Task: Create a akka.stream.scaladsl.Sink that consumes integers,
@@ -19,7 +19,7 @@ object Kata05FoldingSink {
     *
     * @return The source.
     */
-  def createFoldingSinkWithAddition(): Sink[Int, Future[Int]] = {
+  private[kata05] def createFoldingSinkWithAddition(): Sink[Int, Future[Int]] = {
     ???
   }
 
@@ -36,7 +36,7 @@ object Kata05FoldingSink {
     *
     * @return The sink.
     */
-  def createFoldingSinkWithMultiplication(): Sink[Int, Future[Int]] = {
+  private[kata05] def createFoldingSinkWithMultiplication(): Sink[Int, Future[Int]] = {
     ???
   }
 
