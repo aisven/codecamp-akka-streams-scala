@@ -55,7 +55,7 @@ class Kata09FanInShapeSpec extends AsyncWordSpec with Matchers with ParallelTest
   "Kata09FanInShape" must {
 
     "zip correctly" in {
-      implicit val system = ActorSystem("Kata01")
+      implicit val system = ActorSystem("Kata09")
       implicit val materializer = ActorMaterializer()
 
       val fanInShape2 = Kata09FanInShape.createFanInShape2()

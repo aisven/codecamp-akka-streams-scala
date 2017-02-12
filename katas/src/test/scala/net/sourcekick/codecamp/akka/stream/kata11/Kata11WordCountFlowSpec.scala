@@ -59,7 +59,7 @@ class Kata11WordCountFlowSpec extends AsyncWordSpec with Matchers with ParallelT
 
     "count words correctly" in {
 
-      implicit val system = ActorSystem("Kata10")
+      implicit val system = ActorSystem("Kata11")
       implicit val materializer = ActorMaterializer()
 
       val wordSource: Source[String, Future[IOResult]] = createFile2WordsSource("kata11.txt")

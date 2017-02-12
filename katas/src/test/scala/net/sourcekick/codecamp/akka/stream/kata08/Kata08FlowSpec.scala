@@ -53,7 +53,7 @@ class Kata08FlowSpec extends AsyncWordSpec with Matchers with ParallelTestExecut
 
     "create the correct flow" in {
 
-      implicit val system = ActorSystem("Kata01")
+      implicit val system = ActorSystem("Kata08")
       implicit val materializer = ActorMaterializer()
 
       val stringLengthFlow = Kata08Flow.createStringLengthFlow()
