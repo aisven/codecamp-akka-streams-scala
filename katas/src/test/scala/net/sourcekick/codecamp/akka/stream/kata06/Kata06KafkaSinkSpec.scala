@@ -22,6 +22,48 @@ import scala.concurrent.duration._
 
 class Kata06KafkaSinkSpec extends AsyncWordSpec with Matchers with ParallelTestExecution {
 
+  /*
+   * Please do not read this test code while solving any of the katas! Spoiler warning!
+   *
+   * Just run it with right-click on the test class name above.
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   */
+
   private val log: Logger = LoggerFactory.getLogger("Kata06KafkaSinkSpec")
 
   private val KATA06_RECORD = "kata06-record"

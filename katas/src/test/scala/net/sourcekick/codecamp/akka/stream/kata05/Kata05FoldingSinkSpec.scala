@@ -7,6 +7,48 @@ import org.scalatest.{AsyncWordSpec, Matchers, ParallelTestExecution}
 
 class Kata05FoldingSinkSpec extends AsyncWordSpec with Matchers with ParallelTestExecution {
 
+  /*
+   * Please do not read this test code while solving any of the katas! Spoiler warning!
+   *
+   * Just run it with right-click on the test class name above.
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   */
+
   "Kata05FoldingSink" must {
 
     "create the correct stages" in {
