@@ -1,3 +1,6 @@
+/**
+  * Copyright 2017 by Sven Ludwig. All rights reserved.
+  */
 package net.sourcekick.codecamp.akka.stream.kata08
 
 import akka.actor.ActorSystem

@@ -1,3 +1,6 @@
+/**
+  * Copyright 2017 by Sven Ludwig. All rights reserved.
+  */
 package net.sourcekick.codecamp.akka.stream.kata05
 
 import akka.stream.scaladsl.Sink
