@@ -17,7 +17,7 @@ object Kata01NumberSource {
     * @return The source.
     */
   def createSourceOfNaturalNumbers1to10(): Source[Int, NotUsed] = {
-    ??? // TODO solve
+    Source(1 to 10).log("numberSource")
   }
 
 }
