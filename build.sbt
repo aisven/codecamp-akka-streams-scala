@@ -1,17 +1,40 @@
-lazy val `codecamp-akka-streams-scala-project` = project
-  .in(file("."))
-  .enablePlugins(GitVersioning)
-  .aggregate(`code-camp-akka-streams-scala`)
+val company = "net.sourcekick"
+name := "codecamp-akka-streams-scala"
 
-lazy val `code-camp-akka-streams-scala` = project
-  .in(file("katas"))
-  .enablePlugins(JavaAppPackaging, DockerPlugin)
+val versionString: String = "1.0.1-SNAPSHOT"
+version := versionString
 
-// settings for the project-root
-name := "codecamp-akka-streams-scala-root"
-organization := "net.sourcekick"
-version := "PROJECT-ROOT"
-unmanagedSourceDirectories.in(Compile) := Vector.empty
-unmanagedSourceDirectories.in(Test) := Vector.empty
+scalaVersion := Version.Scala
+crossScalaVersions := Seq(Version.Scala)
+
+parallelExecution in Test := true
+
+libraryDependencies ++= Vector(
+  Library.scalaTest % Test,
+  // Akka
+  Library.akkaTestkit % Test,
+  Library.akkaSlf4j,
+  Library.akkaStreams,
+  Library.akkaStreamsKafka,
+  Library.scalaTime,
+  // logging
+  Library.logbackClassic
+)
+
 publishArtifact := false
-scalaVersion := "2.12.0"
+publishArtifact in Test := false
+
+//initialCommands := """|import de.heikoseeberger.gabbler.user._|""".stripMargin
+
+/******************************************************************************************
+                                      Docker
+  ******************************************************************************************/
+enablePlugins(JavaAppPackaging)
+enablePlugins(AshScriptPlugin)
+
+mappings in Universal += {
+  // we are using the reference.conf as default application.conf
+  // the user can override settings here
+  val conf = (resourceDirectory in Compile).value / "reference.conf"
+  conf -> "conf/application.conf"
+}
