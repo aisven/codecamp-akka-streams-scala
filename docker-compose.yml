@@ -3,7 +3,7 @@ version: '2'
 services:
   codecamp-akka-streams-scala-zookeeper4kafka-01-s:
     container_name: codecamp-akka-streams-scala-zookeeper4kafka-01-c
-    image: confluentinc/cp-zookeeper:3.1.2
+    image: confluentinc/cp-zookeeper:3.2.1
 #    network_mode: host
     ports:
      - "44776/tcp:44776/tcp"
@@ -21,7 +21,7 @@ services:
       - codecamp-akka-streams-scala-zookeeper4kafka-01-log-v:/var/lib/zookeeper/log
   codecamp-akka-streams-scala-kafka-01-s:
     container_name: codecamp-akka-streams-scala-kafka-01-c
-    image: confluentinc/cp-kafka:3.1.2
+    image: confluentinc/cp-kafka:3.2.1
 #    network_mode: host
     ports:
      - "44772/tcp:44772/tcp"
