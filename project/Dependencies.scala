@@ -3,12 +3,12 @@ import sbt._
 // format: off
 
 object Version {
-  final val Scala                    = "2.12.0"
+  final val Scala                    = "2.12.1"
   // test
   final val ScalaTest                = "3.0.1"
 // AKka
-  final val Akka                     = "2.4.17"
-  final val AkkaStreamsKafka         = "0.13"
+  final val Akka                     = "2.5.1"
+  final val AkkaStreamsKafka         = "0.16"
 // time
   final val ScalaTime                = "0.4.1"
 // logging
