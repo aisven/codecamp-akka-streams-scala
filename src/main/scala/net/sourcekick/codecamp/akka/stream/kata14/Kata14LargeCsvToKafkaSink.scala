@@ -29,7 +29,7 @@ class Kata14LargeCsvToKafkaSink {
     *
     * @return The source.
     */
-  private[kata03] def createSourceOfLinesInFileKata14Csv(): Source[String, Future[IOResult]] = {
+  private[kata14] def createSourceOfLinesInFileKata14Csv(): Source[String, Future[IOResult]] = {
 
     val url = Thread.currentThread().getContextClassLoader.getResource("kata14.csv")
 
@@ -51,7 +51,7 @@ class Kata14LargeCsvToKafkaSink {
     *
     * @return The source.
     */
-  private[kata03] def createFlowOfStringToTemperatureReading(): Flow[String, TemperatureReading, NotUsed] = {
+  private[kata14] def createFlowOfStringToTemperatureReading(): Flow[String, TemperatureReading, NotUsed] = {
     Flow.fromFunction(toTemperatureReading)
   }
 
@@ -86,7 +86,7 @@ class Kata14LargeCsvToKafkaSink {
     *
     * @return The sink.
     */
-  private[kata06] def createKafkaSink(): Sink[ProducerRecord[String, String], Future[Done]] = {
+  private[kata14] def createKafkaSink(): Sink[ProducerRecord[String, String], Future[Done]] = {
     Producer.plainSink[String, String](createProducerSettings(system))
   }
 
