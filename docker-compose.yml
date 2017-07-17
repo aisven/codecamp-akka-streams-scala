@@ -1,12 +1,12 @@
-version: '2'
+version: '3'
 # storage engines for the code camp
 services:
-  codecamp-akka-streams-scala-zookeeper4kafka-01-s:
-    container_name: codecamp-akka-streams-scala-zookeeper4kafka-01-c
-    image: confluentinc/cp-zookeeper:3.2.1
+  codecamp-akka-streams-scala-zookeeper4kafka-1-s:
+    container_name: codecamp-akka-streams-scala-zookeeper4kafka-1-c
+    image: confluentinc/cp-zookeeper:3.2.2
 #    network_mode: host
     ports:
-     - "44776/tcp:44776/tcp"
+     - "44776:44776"
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 44776
@@ -14,19 +14,19 @@ services:
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_MAX_CLIENT_CNXNS: 20
-      ZOOKEEPER_SERVERS: codecamp-akka-streams-scala-zookeeper4kafka-01-s:44777:44778
+      ZOOKEEPER_SERVERS: codecamp-akka-streams-scala-zookeeper4kafka-1-s:44777:44778
     restart: always
     volumes:
-      - codecamp-akka-streams-scala-zookeeper4kafka-01-data-v:/var/lib/zookeeper/data
-      - codecamp-akka-streams-scala-zookeeper4kafka-01-log-v:/var/lib/zookeeper/log
-  codecamp-akka-streams-scala-kafka-01-s:
-    container_name: codecamp-akka-streams-scala-kafka-01-c
-    image: confluentinc/cp-kafka:3.2.1
+      - codecamp-akka-streams-scala-zookeeper4kafka-1-data-v:/var/lib/zookeeper/data
+      - codecamp-akka-streams-scala-zookeeper4kafka-1-log-v:/var/lib/zookeeper/log
+  codecamp-akka-streams-scala-kafka-1-s:
+    container_name: codecamp-akka-streams-scala-kafka-1-c
+    image: confluentinc/cp-kafka:3.2.2
 #    network_mode: host
     ports:
-     - "44772/tcp:44772/tcp"
+     - "44772:44772"
     depends_on:
-      - codecamp-akka-streams-scala-zookeeper4kafka-01-s
+      - codecamp-akka-streams-scala-zookeeper4kafka-1-s
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: ${SERVER_IP_OR_HOST}:44776
@@ -47,8 +47,8 @@ services:
       KAFKA_TOOLS_LOG4J_LOGLEVEL: INFO
     restart: always
     volumes:
-      - codecamp-akka-streams-scala-kafka-01-data-v:/var/lib/kafka/data
+      - codecamp-akka-streams-scala-kafka-1-data-v:/var/lib/kafka/data
 volumes:
-  codecamp-akka-streams-scala-zookeeper4kafka-01-data-v:
-  codecamp-akka-streams-scala-zookeeper4kafka-01-log-v:
-  codecamp-akka-streams-scala-kafka-01-data-v:
+  codecamp-akka-streams-scala-zookeeper4kafka-1-data-v:
+  codecamp-akka-streams-scala-zookeeper4kafka-1-log-v:
+  codecamp-akka-streams-scala-kafka-1-data-v:

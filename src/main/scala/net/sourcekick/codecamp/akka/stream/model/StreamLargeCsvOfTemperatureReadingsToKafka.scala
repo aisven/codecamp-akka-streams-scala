@@ -7,15 +7,20 @@
 package net.sourcekick.codecamp.akka.stream.model
 
 import java.nio.file.Paths
+import java.time.Instant
 
-import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{FileIO, Flow, Framing, RunnableGraph, Sink, Source}
-import akka.stream.{ActorMaterializer, IOResult}
+import akka.kafka.ProducerSettings
+import akka.kafka.scaladsl.Producer
+import akka.stream.scaladsl.{FileIO, Flow, Framing, Keep, RunnableGraph, Sink, Source}
+import akka.stream.{ActorAttributes, ActorMaterializer, IOResult, Supervision}
 import akka.util.ByteString
+import akka.{Done, NotUsed}
+import net.sourcekick.codecamp.akka.stream.constants.Constants
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.serialization.StringSerializer
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.immutable
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.Random
@@ -29,9 +34,21 @@ object StreamLargeCsvOfTemperatureReadingsToKafka {
     implicit val system = ActorSystem("TimeseriesCsvGenerator")
     implicit val materializer = ActorMaterializer()
 
-    stream("ordered.csv")
+    val start1 = Instant.now()
 
-    streamWithSorting("shuffled.csv")
+    stream("/p/codecamp-akka-streams-scala/ordered.csv")
+
+    val stop1 = Instant.now()
+    val duration1 = java.time.Duration.between(start1, stop1).toMillis
+    log.info("Took {} ms.", duration1)
+
+    val start2 = Instant.now()
+
+    streamWithSorting("/p/codecamp-akka-streams-scala/shuffled.csv")
+
+    val stop2 = Instant.now()
+    val duration2 = java.time.Duration.between(start2, stop2).toMillis
+    log.info("Took {} ms.", duration2)
 
     val terminationFuture = system.terminate()
     Await.result(terminationFuture, 100.seconds)
@@ -39,68 +56,106 @@ object StreamLargeCsvOfTemperatureReadingsToKafka {
 
   private val random = Random
 
-  def stream(path: String)(implicit materializer: ActorMaterializer): Unit = {
+  def stream(path: String)(implicit system: ActorSystem, materializer: ActorMaterializer): Unit = {
     // source
-    val source: Source[ByteString, Future[IOResult]] = FileIO
+    val source: Source[String, Future[IOResult]] = FileIO
       .fromPath(Paths.get(path))
-      .via(Framing.delimiter(ByteString(";"), maximumFrameLength = 2048, allowTruncation = false))
+      .via(Framing.delimiter(ByteString(";"), maximumFrameLength = 2048, allowTruncation = true))
+      .map(bs => bs.utf8String)
 
     // flow
-    val flow: Flow[TemperatureReading, ByteString, NotUsed] =
-      Flow.apply.map(t => ByteString(t.toCsv + "\n"))
+    val flow: Flow[String, TemperatureReading, NotUsed] = createRobustFlowOfStringToTemperatureReading().log("reading")
+
+    // flow 2
+    val flow2: Flow[TemperatureReading, ProducerRecord[String, String], NotUsed] =
+      Flow.fromFunction(t => new ProducerRecord("stream-topic", 0, t.instant.toEpochMilli, t.uuid, t.toCsv))
 
     // sink
-    val targetPath = Paths.get(path)
-    log.info("Going to stream generated time series into file " + targetPath)
-    val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(targetPath)
+    val sink: Sink[ProducerRecord[String, String], Future[Done]] = createKafkaSink()
 
     // runnable graph
-    val rg: RunnableGraph[Future[IOResult]] = ???
+    val rg: RunnableGraph[(Future[IOResult], Future[Done])] =
+      source.viaMat(flow)(Keep.left).viaMat(flow2)(Keep.left).async.toMat(sink)(Keep.both)
 
     // run
-    val ioResult = rg.run()
-    val result = Await.result(ioResult, 20000.seconds)
-    if (!result.wasSuccessful) {
-      log.info("Exception.", result.getError)
+    val result: (Future[IOResult], Future[Done]) = rg.run()
+    val ioResult = Await.result(result._1, 20000.seconds)
+    if (!ioResult.wasSuccessful) {
+      log.info("Exception during Source IO.", ioResult.getError)
     } else {
-      log.info("Finished successful.")
+      log.info("Source IO finished successful.")
+    }
+
+    Await.ready(result._2, 20000.seconds)
+  }
+
+  def streamWithSorting(path: String)(implicit system: ActorSystem, materializer: ActorMaterializer): Unit = {
+    // source
+    val source: Source[String, Future[IOResult]] = FileIO
+      .fromPath(Paths.get(path))
+      .via(Framing.delimiter(ByteString(";"), maximumFrameLength = 2048, allowTruncation = true))
+      .map(bs => bs.utf8String)
+
+    // flow
+    val flow: Flow[String, TemperatureReading, NotUsed] = createRobustFlowOfStringToTemperatureReading()
+
+    // flow 2
+    val flow2: Flow[TemperatureReading, ProducerRecord[String, String], NotUsed] =
+      Flow.fromFunction(t => new ProducerRecord(t.uuid, t.toCsv))
+
+    // sink
+    val sink: Sink[ProducerRecord[String, String], Future[Done]] = createKafkaSink()
+
+    // runnable graph
+    val rg: RunnableGraph[(Future[IOResult], Future[Done])] =
+      source.viaMat(flow)(Keep.left).viaMat(flow2)(Keep.left).async.toMat(sink)(Keep.both)
+
+    // run
+    val result: (Future[IOResult], Future[Done]) = rg.run()
+    val ioResult = Await.result(result._1, 120.seconds)
+    if (!ioResult.wasSuccessful) {
+      log.info("Exception during Source IO.", ioResult.getError)
+    } else {
+      log.info("Source IO finished successful.")
+    }
+
+    Await.ready(result._2, 120.seconds)
+  }
+
+  private def createRobustFlowOfStringToTemperatureReading(): Flow[String, TemperatureReading, NotUsed] = {
+
+    val decider: Supervision.Decider = {
+      case _: TemperatureReadingParseException => Supervision.Resume
+      case _                                   => Supervision.Stop
+    }
+
+    Flow.fromFunction(toTemperatureReading).withAttributes(ActorAttributes.supervisionStrategy(decider))
+  }
+
+  private def toTemperatureReading(s: String): TemperatureReading = {
+    try {
+
+      val a: Array[String] = s.split(",")
+      TemperatureReading(a(0), Instant.parse(a(1)), a(2).toFloat, TemperatureUnit.fromString(a(3)))
+
+    } catch {
+      case t: Exception => throw TemperatureReadingParseException(cause = t)
     }
   }
 
-  def streamWithSorting(path: String)(implicit materializer: ActorMaterializer): Unit = {
+  case class TemperatureReadingParseException(message: String = "", cause: Throwable = None.orNull)
+      extends RuntimeException(message, cause)
 
-    // source
-    val source: Source[ByteString, Future[IOResult]] = FileIO
-      .fromPath(Paths.get(path))
-      .via(Framing.delimiter(ByteString(";"), maximumFrameLength = 2048, allowTruncation = false))
+  private def createKafkaSink()(implicit system: ActorSystem): Sink[ProducerRecord[String, String], Future[Done]] = {
+    Producer.plainSink[String, String](createProducerSettings())
+  }
 
-    // shuffle flow
-    val shuffleFlow: Flow[TemperatureReading, TemperatureReading, NotUsed] =
-      Flow.apply
-        .sliding(100, 100)
-        .map((s: immutable.Seq[TemperatureReading]) => Random.shuffle(s))
-        .flatMapConcat(s => Source.fromIterator(() => s.iterator))
-
-    // flow
-    val flow: Flow[TemperatureReading, ByteString, NotUsed] =
-      Flow.apply.map(t => ByteString(t.toCsv + "\n"))
-
-    // sink
-    val targetPath = Paths.get(path)
-    log.info("Going to stream generated time series into file " + targetPath)
-    val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(targetPath)
-
-    // runnable graph
-    val rg: RunnableGraph[Future[IOResult]] = ???
-
-    // run
-    val ioResult = rg.run()
-    val result = Await.result(ioResult, 20000.seconds)
-    if (!result.wasSuccessful) {
-      log.info("Exception.", result.getError)
-    } else {
-      log.info("Finished successful.")
-    }
+  private def createProducerSettings()(implicit system: ActorSystem) = {
+    ProducerSettings
+      .create(system, new StringSerializer, new StringSerializer)
+      .withBootstrapServers(Constants.KAFKA_IP_OR_HOST + ":" + Constants.KAFKA_CLIENT_PORT)
+      .withParallelism(1)
+      .withProperty("max.in.flight.requests.per.connection", "1")
   }
 
 }
