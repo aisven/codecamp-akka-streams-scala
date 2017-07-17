@@ -7,11 +7,10 @@
 package net.sourcekick.codecamp.akka.stream.model
 
 import java.nio.file.Paths
-import java.util.UUID
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{FileIO, Flow, Framing, Keep, RunnableGraph, Sink, Source}
+import akka.stream.scaladsl.{FileIO, Flow, Framing, RunnableGraph, Sink, Source}
 import akka.stream.{ActorMaterializer, IOResult}
 import akka.util.ByteString
 import org.slf4j.{Logger, LoggerFactory}
@@ -48,20 +47,15 @@ object StreamLargeCsvOfTemperatureReadingsToKafka {
 
     // flow
     val flow: Flow[TemperatureReading, ByteString, NotUsed] =
-      Flow.apply.mapAsync(1)(t =>
-        Future {
-          ByteString(t.toString.replace("TemperatureReading(", "").replace(")", "") + "\n")
-      })
+      Flow.apply.map(t => ByteString(t.toCsv + "\n"))
 
     // sink
-    val url = Thread.currentThread().getContextClassLoader.getResource("kata02.txt")
     val targetPath = Paths.get(path)
     log.info("Going to stream generated time series into file " + targetPath)
     val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(targetPath)
 
     // runnable graph
-    val rg: RunnableGraph[Future[IOResult]] =
-      source.take(numberOfTemperatureReadings).via(flow).async.toMat(sink)(Keep.right)
+    val rg: RunnableGraph[Future[IOResult]] = ???
 
     // run
     val ioResult = rg.run()
@@ -76,10 +70,9 @@ object StreamLargeCsvOfTemperatureReadingsToKafka {
   def streamWithSorting(path: String)(implicit materializer: ActorMaterializer): Unit = {
 
     // source
-    val source: Source[TemperatureReading, NotUsed] = Source.unfold(first)(previous => {
-      val t = generateTemperatureReading(previous)
-      Option((t, t))
-    })
+    val source: Source[ByteString, Future[IOResult]] = FileIO
+      .fromPath(Paths.get(path))
+      .via(Framing.delimiter(ByteString(";"), maximumFrameLength = 2048, allowTruncation = false))
 
     // shuffle flow
     val shuffleFlow: Flow[TemperatureReading, TemperatureReading, NotUsed] =
@@ -90,20 +83,15 @@ object StreamLargeCsvOfTemperatureReadingsToKafka {
 
     // flow
     val flow: Flow[TemperatureReading, ByteString, NotUsed] =
-      Flow.apply.mapAsync(1)(t =>
-        Future {
-          ByteString(t.toString.replace("TemperatureReading(", "").replace(")", "") + "\n")
-      })
+      Flow.apply.map(t => ByteString(t.toCsv + "\n"))
 
     // sink
-    val url = Thread.currentThread().getContextClassLoader.getResource("kata02.txt")
     val targetPath = Paths.get(path)
     log.info("Going to stream generated time series into file " + targetPath)
     val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(targetPath)
 
     // runnable graph
-    val rg: RunnableGraph[Future[IOResult]] =
-      source.take(numberOfTemperatureReadings).via(shuffleFlow).via(flow).async.toMat(sink)(Keep.right)
+    val rg: RunnableGraph[Future[IOResult]] = ???
 
     // run
     val ioResult = rg.run()

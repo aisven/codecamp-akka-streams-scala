@@ -15,7 +15,6 @@ import scala.collection.immutable
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.Random
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object GenerateCsvOfTemperatureReadings {
 
@@ -26,9 +25,21 @@ object GenerateCsvOfTemperatureReadings {
     implicit val system = ActorSystem("TimeseriesCsvGenerator")
     implicit val materializer = ActorMaterializer()
 
+    val start1 = Instant.now()
+
     generate("ordered.csv", 100L)
 
+    val stop1 = Instant.now()
+    val duration1 = java.time.Duration.between(start1, stop1).toMillis
+    log.info("Took {} ms.", duration1)
+
+    val start2 = Instant.now()
+
     generateShuffled("shuffled.csv", 200000L)
+
+    val stop2 = Instant.now()
+    val duration2 = java.time.Duration.between(start2, stop2).toMillis
+    log.info("Took {} ms.", duration2)
 
     val terminationFuture = system.terminate()
     Await.result(terminationFuture, 100.seconds)
@@ -50,13 +61,9 @@ object GenerateCsvOfTemperatureReadings {
 
     // flow
     val flow: Flow[TemperatureReading, ByteString, NotUsed] =
-      Flow.apply.mapAsync(1)(t =>
-        Future {
-          ByteString(t.toCsv + "\n")
-      })
+      Flow.apply.map(t => ByteString(t.toCsv + "\n"))
 
     // sink
-    val url = Thread.currentThread().getContextClassLoader.getResource("kata02.txt")
     val targetPath = Paths.get(path)
     log.info("Going to stream generated time series into file " + targetPath)
     val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(targetPath)
@@ -97,13 +104,9 @@ object GenerateCsvOfTemperatureReadings {
 
     // flow
     val flow: Flow[TemperatureReading, ByteString, NotUsed] =
-      Flow.apply.mapAsync(1)(t =>
-        Future {
-          ByteString(t.toString.replace("TemperatureReading(", "").replace(")", "") + "\n")
-      })
+      Flow.apply.map(t => ByteString(t.toCsv + "\n"))
 
     // sink
-    val url = Thread.currentThread().getContextClassLoader.getResource("kata02.txt")
     val targetPath = Paths.get(path)
     log.info("Going to stream generated time series into file " + targetPath)
     val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(targetPath)
