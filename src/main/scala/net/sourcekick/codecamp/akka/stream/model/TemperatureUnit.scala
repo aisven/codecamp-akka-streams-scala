@@ -14,7 +14,13 @@ object TemperatureUnit {
   def fromString(unitAsString: String): TemperatureUnit = unitAsString match {
     case "K" => Kelvin
     case "C" => Celsius
-    case _ => throw new IllegalArgumentException(s"unknown temperature unit $unitAsString")
+    case _   => throw new IllegalArgumentException(s"unknown temperature unit $unitAsString")
+  }
+
+  def toString(unit: TemperatureUnit): String = unit match {
+    case Kelvin  => "K"
+    case Celsius => "C"
+    case _       => throw new IllegalArgumentException(s"unknown temperature unit $unit")
   }
 
 }
